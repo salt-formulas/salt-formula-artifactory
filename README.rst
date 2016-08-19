@@ -1,21 +1,37 @@
 
-==================================
-artifactory
-==================================
+===========
+Artifactory
+===========
 
-Service artifactory description
+JFrog Artifactory is the only Universal Repository Manager supporting all major packaging formats, build tools and CI servers.
+
 
 Sample pillars
 ==============
 
-Single artifactory service
+Single artifactory OSS edition from OS package
 
 .. code-block:: yaml
 
     artifactory:
       server:
         enabled: true
-        version: icehouse
+        edition: oss
+        version: 4
+        source:
+          engine: pkg
+
+Single artifactory pro edition from OS package
+
+.. code-block:: yaml
+
+    artifactory:
+      server:
+        enabled: true
+        edition: pro
+        version: 4
+        source:
+          engine: pkg
 
 
 Development and testing
@@ -38,7 +54,8 @@ implementated in `<repo>/test/integration`. It installs the particular driver to
 (`Serverspec <https://github.com/neillturner/kitchen-verifier-serverspec>`_,
 `InSpec <https://github.com/chef/kitchen-inspec>`_, Shell, Bats, ...) prior the verification is executed.
 
-Usage:
+Usage
+-----
 
 .. code-block:: shell
 
@@ -56,4 +73,4 @@ Usage:
 Read more
 =========
 
-* links
+* https://www.jfrog.com/confluence/display/RTF/Debian+Repositories

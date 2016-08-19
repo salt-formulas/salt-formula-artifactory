@@ -1,29 +1,13 @@
 
-{%- set source_engine = salt['pillar.get']('artifactory:server:source:engine') %}
+{%- set source_edition = salt['pillar.get']('artifactory:server:edition') %}
 
 {%- load_yaml as base_defaults %}
-{%- if source_engine == 'git' %}
 Debian:
   pkgs:
-  - python-psycopg2
-  dir:
-    base: /srv/artifactory/venv
-    home: /var/lib/artifactory
-    workspace: /srv/artifactory/workspace
+  - jfrog-artifactory-{{ source_edition }}
 RedHat:
   pkgs:
-  - python-psycopg2
-  dir:
-    base: /srv/artifactory/venv
-    home: /var/lib/artifactory
-    workspace: /srv/artifactory/workspace
-{%- else %}
-Debian:
-  pkgs:
-  - artifactory
-  dir:
-    base: /usr/lib/artifactory
-{%- endif %}
+  - jfrog-artifactory-{{ source_edition }}
 {%- endload %}
 
 {%- set server = salt['grains.filter_by'](base_defaults, merge=salt['pillar.get']('artifactory:server')) %}
