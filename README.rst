@@ -33,6 +33,20 @@ Single artifactory pro edition from OS package
         source:
           engine: pkg
 
+Single artifactory with PostgreSQL database
+
+.. code-block:: yaml
+
+    artifactory:
+      server:
+        database:
+          engine: postgresql
+          host: localhost
+          port: 5432
+          name: artifactory
+          user: artifactory
+          password: pass
+
 
 Development and testing
 =======================
@@ -69,8 +83,8 @@ Usage
   make kitchen
 
 
-
 Read more
 =========
 
 * https://www.jfrog.com/confluence/display/RTF/Debian+Repositories
+* https://www.jfrog.com/confluence/display/RTF/PostgreSQL

@@ -5,9 +5,19 @@
 Debian:
   pkgs:
   - jfrog-artifactory-{{ source_edition }}
+  service: artifactory
+  lib:
+    postgresql: https://jdbc.postgresql.org/download/postgresql-9.4.1209.jre6.jar
+  database:
+    engine: derby
 RedHat:
   pkgs:
   - jfrog-artifactory-{{ source_edition }}
+  service: artifactory
+  lib:
+    postgresql: https://jdbc.postgresql.org/download/postgresql-9.4.1209.jre6.jar
+  database:
+    engine: derby
 {%- endload %}
 
 {%- set server = salt['grains.filter_by'](base_defaults, merge=salt['pillar.get']('artifactory:server')) %}

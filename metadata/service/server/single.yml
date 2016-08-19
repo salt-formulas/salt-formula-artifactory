@@ -3,8 +3,15 @@ applications:
 classes:
 - service.artifactory.support
 parameters:
+  _param:
+    artifactory_edition: oss
   artifactory:
     server:
       enabled: true
       bind:
         address: 0.0.0.0
+      edition: ${_param:artifactory_edition}
+      version: 4
+      source:
+        engine: pkg
+
