@@ -9,6 +9,9 @@ JFrog Artifactory is the only Universal Repository Manager supporting all major 
 Sample pillars
 ==============
 
+Server
+------
+
 Single artifactory OSS edition from OS package
 
 .. code-block:: yaml
@@ -47,44 +50,44 @@ Single artifactory with PostgreSQL database
           user: artifactory
           password: pass
 
+Client
+------
 
-Development and testing
-=======================
+Basic client setup
 
-Development and test workflow with `Test Kitchen <http://kitchen.ci>`_ and
-`kitchen-salt <https://github.com/simonmcc/kitchen-salt>`_ provisioner plugin.
+.. code-block:: yaml
 
-Test Kitchen is a test harness tool to execute your configured code on one or more platforms in isolation.
-There is a ``.kitchen.yml`` in main directory that defines *platforms* to be tested and *suites* to execute on them.
+    artifactory:
+      client:
+        enabled: true
+        server:
+          host: 10.10.10.148
+          port: 8081
+          user: admin
+          password: password
 
-Kitchen CI can spin instances locally or remote, based on used *driver*.
-For local development ``.kitchen.yml`` defines a `vagrant <https://github.com/test-kitchen/kitchen-vagrant>`_ or
-`docker  <https://github.com/test-kitchen/kitchen-docker>`_ driver.
+Artifactory repository definition
 
-To use backend drivers or implement your CI follow the section `INTEGRATION.rst#Continuous Integration`__.
+.. code-block:: yaml
 
-The `Busser <https://github.com/test-kitchen/busser>`_ *Verifier* is used to setup and run tests
-implementated in `<repo>/test/integration`. It installs the particular driver to tested instance
-(`Serverspec <https://github.com/neillturner/kitchen-verifier-serverspec>`_,
-`InSpec <https://github.com/chef/kitchen-inspec>`_, Shell, Bats, ...) prior the verification is executed.
-
-Usage
------
-
-.. code-block:: shell
-
-  # list instances and status
-  kitchen list
-
-  # manually execute integration tests
-  kitchen [test || [create|converge|verify|exec|login|destroy|...]] [instance] -t tests/integration
-
-  # use with provided Makefile (ie: within CI pipeline)
-  make kitchen
-
+    artifactory:
+      client:
+        enabled: true
+      repo:
+        local_artifactory_repo:
+          name: local_artifactory_repo
+          package_type: docker
+          repo_type: local
+        remote_artifactory_repo:
+          name: remote_artifactory_repo
+          package_type: generic
+          repo_type: remote
+          url: "http://totheremoterepo:80/"
 
 Read more
 =========
 
 * https://www.jfrog.com/confluence/display/RTF/Debian+Repositories
 * https://www.jfrog.com/confluence/display/RTF/PostgreSQL
+* https://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-REPOSITORIES
+* https://www.jfrog.com/confluence/display/RTF/Repository+Configuration+JSON
