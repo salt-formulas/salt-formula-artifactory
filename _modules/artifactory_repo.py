@@ -217,7 +217,7 @@ def _client(**connection_args):
     Set up artifactory credentials
 
     '''
-   
+
     prefix = "artifactory"
 
     # look in connection_args first, then default to config file
@@ -226,7 +226,7 @@ def _client(**connection_args):
             __salt__['config.get'](prefix, {})).get(key, default)
 
     client_config = {
-      'artifactory_url': 'http://%s:%s/artifactory/api' % (get('host', 'localhost'), get('port', '8080'))
+      'artifactory_url': '%s://%s:%s/artifactory/api' % (get('proto', 'http'), get('host', 'localhost'), get('port', '8080'))
     }
 
     user = get('user', False)
@@ -235,7 +235,7 @@ def _client(**connection_args):
       client_config['username'] = user
       client_config['password'] = password
 
-    artifactory_client = ArtifactoryClient(client_config) 
+    artifactory_client = ArtifactoryClient(client_config)
 
     return artifactory_client
 
@@ -300,7 +300,7 @@ def repo_create(name, repo_type="local", package="generic", url=None, **connecti
     .. code-block:: bash
 
         salt '*' artifactory_repo.repo_create projectname remote generic
-    
+
     '''
     ret = {}
 
