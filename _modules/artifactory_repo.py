@@ -50,7 +50,8 @@ class ArtifactoryClient:
             'search_repos': 'repositories',
             'username': 'your-user',
             'password': 'password',
-            'headers': {'Content-type': 'application/json'}
+            'headers': {'Content-type': 'application/json'},
+            'ssl_verify': True
         }
 
         client_config.update(config)
@@ -65,7 +66,7 @@ class ArtifactoryClient:
         query = "%s/%s/%s" % (self.artifactory_url, self.search_repos, name)
         auth = (self.username, self.password)
 
-        r = requests.put(query, auth=auth, json=config)
+        r = requests.put(query, auth=auth, json=config, verify=self.ssl_verify)
         print(r.content)
 
         raw_response = self.query_artifactory(query)
@@ -116,9 +117,9 @@ class ArtifactoryClient:
         query_type = query_type.lower()
 
         if query_type == "get":
-            response = requests.get(query, auth=auth, headers=self.headers)
+            response = requests.get(query, auth=auth, headers=self.headers, verify=self.ssl_verify)
         elif query_type == "put":
-            response = requests.put(query, data=query.split('?', 1)[1], auth=auth, headers=self.headers)
+            response = requests.put(query, data=query.split('?', 1)[1], auth=auth, headers=self.headers, verify=self.ssl_verify)
         if query_type == "post":
             pass
 
@@ -226,7 +227,8 @@ def _client(**connection_args):
             __salt__['config.get'](prefix, {})).get(key, default)
 
     client_config = {
-      'artifactory_url': '%s://%s:%s/artifactory/api' % (get('proto', 'http'), get('host', 'localhost'), get('port', '8080'))
+      'artifactory_url': '%s://%s:%s/artifactory/api' % (get('proto', 'http'), get('host', 'localhost'), get('port', '8080')),
+      'ssl_verify': get('ssl_verify', True)
     }
 
     user = get('user', False)
