@@ -5,11 +5,6 @@ artifactory_client_install:
   pkg.installed:
   - names: {{ client.pkgs }}
 
-/etc/salt/minion.d/_artifactory.conf:
-  file.managed:
-  - source: salt://artifactory/files/_artifactory.conf
-  - template: jinja
-
 {%- for repo_name, repo in client.repo.iteritems() %}
 
 artifactory_client_repo_{{ repo_name }}:
