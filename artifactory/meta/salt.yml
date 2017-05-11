@@ -1,5 +1,5 @@
 minion:
-  {%- if pillar.artifactory.client is defined %}
+  {%- if pillar.get('artifactory', {}).get('client') %}
   artifactory:
     {%- from "artifactory/map.jinja" import client with context %}
     artifactory:
