@@ -5,6 +5,9 @@ artifactory_client_install:
   pkg.installed:
   - names: {{ client.pkgs }}
 
+artifactory_config:
+    artifactory_config.artifactory_init
+
 {%- for repo_name, repo in client.repo.iteritems() %}
 
 artifactory_client_repo_{{ repo_name }}:
