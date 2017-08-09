@@ -11,4 +11,11 @@ minion:
       user: {{ client.server.user }}
       password: {{ client.server.password }}
       {%- endif %}
+      {%- if client.server.license_key is defined %}
+      license_key: {{ client.server.license_key }}
+      ldap_server: {{ client.server.ldap_server }}
+      ldap_account_base: {{ client.server.ldap_account_base }}
+      ldap_searchFilter: {{ client.server.ldap_searchFilter }}
+      {%- endif %}
+
   {%- endif %}
