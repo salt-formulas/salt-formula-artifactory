@@ -84,6 +84,20 @@ Artifactory repository definition
           repo_type: remote
           url: "http://totheremoterepo:80/"
 
+
+Repository configuration
+========================
+
+Sample pillar above shows basic repository configuration, but you can use any parameters
+described in https://www.jfrog.com/confluence/display/RTF/Repository+Configuration+JSON
+
+This module does direct map from pillar parameters to repository JSON description
+with two aliases for compatibility:
+
+  * repo_type -> rclass
+  * package_type -> packageType
+
+
 Read more
 =========
 
@@ -91,6 +105,7 @@ Read more
 * https://www.jfrog.com/confluence/display/RTF/PostgreSQL
 * https://www.jfrog.com/confluence/display/RTF/Artifactory+REST+API#ArtifactoryRESTAPI-REPOSITORIES
 * https://www.jfrog.com/confluence/display/RTF/Repository+Configuration+JSON
+
 Documentation and Bugs
 ======================
 
