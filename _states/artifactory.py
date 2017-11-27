@@ -4,6 +4,8 @@ Management of artifactory configuration
 =======================================
 '''
 
+import json
+
 
 def __virtual__():
     if 'artifactory.get_license' in __salt__:
