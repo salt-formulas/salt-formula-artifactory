@@ -7,6 +7,7 @@ Module for configuring Artifactory.
 import json
 import logging
 import requests
+import os
 
 from collections import OrderedDict
 
@@ -18,6 +19,18 @@ log = logging.getLogger(__name__)
 
 
 def _api_call(endpoint, data=None, headers=None, method='GET',
+              **connection_args):
+
+    if endpoint.startswith('/api') == False:
+       endpoint = '/api' + endpoint
+
+    return _rest_call(endpoint=endpoint,
+                      data=data,
+                      headers=headers,
+                      method=method,
+                      **connection_args)
+
+def _rest_call(endpoint, data=None, headers=None, method='GET',
               **connection_args):
 
     log.debug('Got connection args: {}'.format(connection_args))
@@ -34,7 +47,6 @@ def _api_call(endpoint, data=None, headers=None, method='GET',
         'url',
         '{proto}://{host}:{port}/artifactory'.format(**connection_args)
     )
-    api_url = base_url + '/api'
 
     username = connection_args.get('user', 'admin')
     password = connection_args.get('password', 'password')
@@ -49,10 +61,10 @@ def _api_call(endpoint, data=None, headers=None, method='GET',
     if(data and method == 'GET'):
         method = 'POST'
 
-    endpoint_url = api_url + endpoint
+    endpoint_url = base_url + endpoint
     log.debug('Doing {0} request to {1}'.format(method, endpoint_url))
 
-    # API call request
+    # REST API call request
     resp = api_connection.request(
         method=method,
         url=endpoint_url,
@@ -60,7 +72,7 @@ def _api_call(endpoint, data=None, headers=None, method='GET',
         headers=headers
     )
 
-    if resp.status_code == requests.codes.ok:
+    if resp.ok:
         return True, resp.text
     else:
         errors = json.loads(resp.text).get('errors')
@@ -70,7 +82,6 @@ def _api_call(endpoint, data=None, headers=None, method='GET',
         else:
             log.error('%(status)s:%(message)s' % json.loads(resp.text))
         return False, json.loads(resp.text)
-
 
 def get_license(**kwargs):
     endpoint = '/system/license'
@@ -249,3 +260,24 @@ def set_repo(name, repo_config, **kwargs):
         headers={'Content-Type': 'application/json'},
         **kwargs
     )
+
+def deploy_artifact(source_file, endpoint, **kwargs):
+
+    endpoint = endpoint + "/" + os.path.basename(source_file)
+    with open(source_file, 'rb') as input_file:
+         result, status = _rest_call(
+             endpoint=endpoint,
+             method='PUT',
+             data=input_file,
+             **kwargs
+         )
+    return result, json.loads(status)
+
+def delete_artifact(item_to_delete, **kwargs):
+
+    return _rest_call(
+        endpoint=item_to_delete,
+        method='DELETE',
+        **kwargs
+    )
+
