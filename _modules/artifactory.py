@@ -14,6 +14,7 @@ from collections import OrderedDict
 from lxml import etree
 from lxml import objectify
 
+from salt.exceptions import CommandExecutionError
 
 log = logging.getLogger(__name__)
 
@@ -75,13 +76,17 @@ def _rest_call(endpoint, data=None, headers=None, method='GET',
     if resp.ok:
         return True, resp.text
     else:
-        errors = json.loads(resp.text).get('errors')
-        if errors:
-            for error in errors:
-                log.error('%(status)s:%(message)s' % error)
-        else:
-            log.error('%(status)s:%(message)s' % json.loads(resp.text))
-        return False, json.loads(resp.text)
+        try:
+            errors = json.loads(resp.text).get('errors')
+            if errors:
+                for error in errors:
+                    log.error('%(status)s:%(message)s' % error)
+            else:
+                log.error('%(status)s:%(message)s' % json.loads(resp.text))
+            return False, json.loads(resp.text)
+        except ValueError:
+            return False, resp.text
+
 
 def get_license(**kwargs):
     endpoint = '/system/license'
@@ -264,14 +269,27 @@ def set_repo(name, repo_config, **kwargs):
 def deploy_artifact(source_file, endpoint, **kwargs):
 
     endpoint = endpoint + "/" + os.path.basename(source_file)
-    with open(source_file, 'rb') as input_file:
-         result, status = _rest_call(
-             endpoint=endpoint,
-             method='PUT',
-             data=input_file,
-             **kwargs
-         )
-    return result, json.loads(status)
+    # There is an issue with zero lenght files sending for Requests 2.x
+    # https://github.com/requests/requests/issues/4215
+    # Need to verify filesize before sending.
+    if os.path.getsize(source_file) > 0:
+        with open(source_file, 'rb') as input_file:
+            result, status = _rest_call(
+                 endpoint=endpoint,
+                 method='PUT',
+                 data=input_file,
+                 **kwargs
+            )
+    else:
+        result, status = _rest_call(
+                 endpoint=endpoint,
+                 method='PUT',
+                 data='',
+                 **kwargs
+            )
+    if result == False:
+        raise CommandExecutionError(status)
+    return status
 
 def delete_artifact(item_to_delete, **kwargs):
 
